@@ -1,4 +1,4 @@
-﻿namespace day_02;
+﻿﻿namespace day_02;
 
 class Program
 {
@@ -63,9 +63,8 @@ class Program
         foreach (var line in inputLines)
         {
             List<int> report = line.Split(' ').Select(x => int.Parse(x)).ToList();
-            if (!IsSafe(report) && !CanBeMadeSafe(report))
-                continue;
-            safeReportsCount++;
+            if (IsSafe(report) || CanBeMadeSafe(report))
+                safeReportsCount++;
         }
         Console.WriteLine(safeReportsCount + " reports are safe");
     }
