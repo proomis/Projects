@@ -30,20 +30,22 @@ class Program
     
     private static void Solution1()
     {
-        long stoneCount = CountStonesAfterNBlinks(25);
-        Console.WriteLine(stoneCount);
+        int blinkCount = 25;
+        BigInteger stoneCount = CountStonesAfterNBlinks(blinkCount);
+        Console.WriteLine($"number of stones after {blinkCount} blinks = {stoneCount}");
     }
 
     private static void Solution2()
     {
-        long stoneCount = CountStonesAfterNBlinks(75);
-        Console.WriteLine(stoneCount);
+        int blinkCount = 75;
+        BigInteger stoneCount = CountStonesAfterNBlinks(blinkCount);
+        Console.WriteLine($"number of stones after {blinkCount} blinks = {stoneCount}");
     }
 
-    private static long CountStonesAfterNBlinks(int blinkCount)
+    private static BigInteger CountStonesAfterNBlinks(int blinkCount)
     {
-        Dictionary<long, long> stoneCounter = [];
-        foreach (long stone in stoneLine)
+        Dictionary<BigInteger, BigInteger> stoneCounter = [];
+        foreach (BigInteger stone in stoneLine)
         {
             if (!stoneCounter.ContainsKey(stone)) { stoneCounter[stone] = 0; }
             stoneCounter[stone]++;
@@ -51,8 +53,8 @@ class Program
 
         foreach (int blink in Enumerable.Range(1, blinkCount))
         {
-            Dictionary<long, long> nextStoneCounter = [];
-            foreach (long stone in stoneCounter.Keys)
+            Dictionary<BigInteger, BigInteger> nextStoneCounter = [];
+            foreach (BigInteger stone in stoneCounter.Keys)
             {
                 if (stone == 0)
                 {
@@ -63,10 +65,10 @@ class Program
                 
                 string stoneString = stone.ToString();
                 int stoneDigitCount = stoneString.Length;
-                if (long.IsEvenInteger(stoneDigitCount))
+                if (BigInteger.IsEvenInteger(stoneDigitCount))
                 {
-                    long newStone1 = long.Parse(stoneString[..(stoneDigitCount / 2)]);
-                    long newStone2 = long.Parse(stoneString[(stoneDigitCount / 2)..]);
+                    BigInteger newStone1 = BigInteger.Parse(stoneString[..(stoneDigitCount / 2)]);
+                    BigInteger newStone2 = BigInteger.Parse(stoneString[(stoneDigitCount / 2)..]);
                     if (!nextStoneCounter.ContainsKey(newStone1)) { nextStoneCounter[newStone1] = 0; }
                     if (!nextStoneCounter.ContainsKey(newStone2)) { nextStoneCounter[newStone2] = 0; }
                     nextStoneCounter[newStone1] += stoneCounter[stone];
@@ -74,24 +76,24 @@ class Program
                     continue;
                 }
 
-                long newStone = stone*2024;
+                BigInteger newStone = stone*2024;
                 if (!nextStoneCounter.ContainsKey(newStone)) { nextStoneCounter[newStone] = 0; }
                 nextStoneCounter[newStone] += stoneCounter[stone];
             }
             stoneCounter = nextStoneCounter;    
         }
 
-        long stoneCount = stoneCounter.Sum(x => x.Value);
+        BigInteger stoneCount = stoneCounter.Values.Aggregate( (a, b) => a + b);
         return stoneCount;
     }
 
 
     private static void Parse()
     {
-        stoneLine = InputLines.First().Split(" ").Select(s=>long.Parse(s)).ToList();
+        stoneLine = InputLines.First().Split(" ").Select(s=>BigInteger.Parse(s)).ToList();
     }
 
     
     private static string[] InputLines = [];
-    private static List<long> stoneLine = [];
+    private static List<BigInteger> stoneLine = [];
 }
