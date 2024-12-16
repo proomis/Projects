@@ -17,7 +17,7 @@ using Coordinate = (int, int);
 
 
 
-namespace day_11;
+namespace day_12;
 
 class Program
 {
