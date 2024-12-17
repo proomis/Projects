@@ -1,0 +1,15 @@
+C:\Users\primu\Develop\Projects\Advent-of-Code\2024-C#\day-14\bin\Debug\net9.0\day-14.exe
+C:\Users\primu\Develop\Projects\Advent-of-Code\2024-C#\day-14\bin\Debug\net9.0\day-14.deps.json
+C:\Users\primu\Develop\Projects\Advent-of-Code\2024-C#\day-14\bin\Debug\net9.0\day-14.runtimeconfig.json
+C:\Users\primu\Develop\Projects\Advent-of-Code\2024-C#\day-14\bin\Debug\net9.0\day-14.dll
+C:\Users\primu\Develop\Projects\Advent-of-Code\2024-C#\day-14\bin\Debug\net9.0\day-14.pdb
+C:\Users\primu\Develop\Projects\Advent-of-Code\2024-C#\day-14\obj\Debug\net9.0\day-14.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\primu\Develop\Projects\Advent-of-Code\2024-C#\day-14\obj\Debug\net9.0\day-14.AssemblyInfoInputs.cache
+C:\Users\primu\Develop\Projects\Advent-of-Code\2024-C#\day-14\obj\Debug\net9.0\day-14.AssemblyInfo.cs
+C:\Users\primu\Develop\Projects\Advent-of-Code\2024-C#\day-14\obj\Debug\net9.0\day-14.csproj.CoreCompileInputs.cache
+C:\Users\primu\Develop\Projects\Advent-of-Code\2024-C#\day-14\obj\Debug\net9.0\day-14.sourcelink.json
+C:\Users\primu\Develop\Projects\Advent-of-Code\2024-C#\day-14\obj\Debug\net9.0\day-14.dll
+C:\Users\primu\Develop\Projects\Advent-of-Code\2024-C#\day-14\obj\Debug\net9.0\refint\day-14.dll
+C:\Users\primu\Develop\Projects\Advent-of-Code\2024-C#\day-14\obj\Debug\net9.0\day-14.pdb
+C:\Users\primu\Develop\Projects\Advent-of-Code\2024-C#\day-14\obj\Debug\net9.0\day-14.genruntimeconfig.cache
+C:\Users\primu\Develop\Projects\Advent-of-Code\2024-C#\day-14\obj\Debug\net9.0\ref\day-14.dll
