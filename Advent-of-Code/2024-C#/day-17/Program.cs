@@ -8,6 +8,7 @@ using System.Data.SqlTypes;
 using System.Linq;
 using System.Net;
 using System.Numerics;
+using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
 using System.Runtime.CompilerServices;
@@ -17,139 +18,147 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks.Dataflow;
 using Microsoft.VisualBasic;
 
-
-
-
 namespace day_17;
 
 class Program
 {
-    
     static void Main(string[] args)
     {
         const string inputFile = "input.txt";
         InputLines = File.ReadAllLines(inputFile);
         Parse();
         Solution1();
-        Solution2(); 
+        Solution2();
     }
+
     private static void Solution1()
     {
         Output = [];
 
+        List<Instruction> program = AllInstructions
+            .SelectMany(pair => new[] { pair.Item1, (Instruction)pair.Item2 })
+            .ToList();
         InstructionPointer = 0;
         while (InstructionPointer < AllInstructions.Count)
         {
-            Instruction instruction = AllInstructions[InstructionPointer++];
-            int operand = (int)AllInstructions[InstructionPointer++];
-
-            Execute(instruction, operand);            
+            Instruction instruction = AllInstructions[InstructionPointer].Item1;
+            int operand = AllInstructions[InstructionPointer].Item2;
+            Execute(instruction, operand);
+            InstructionPointer++;
         }
-        Console.WriteLine("hej");
-        Console.WriteLine(String.Join(",", Output));
-    }
 
+        string outputString = String.Join(",", Output);
+        Console.WriteLine(
+            "If you use commmas to join the values the program output into a single string you get "
+                + outputString
+        );
+    }
 
     private static void Solution2()
     {
-        const long MaxA = 100_000_000_000_000;
-        long B = Register.B;
-        long C = Register.C; 
-
-        for (long a = 0; a < MaxA; a++)
+        // hard-coded to my given input
+        static long? findLowestInitialA(List<int> program, long answer)
         {
-            Register.A = a;
-            Register.B = B;
-            Register.C = C;
-            Output = [];
-            InstructionPointer = 0;
-            while (InstructionPointer < AllInstructions.Count)
-            {
-                Instruction instruction = AllInstructions[InstructionPointer++];
-                int operand = (int)AllInstructions[InstructionPointer++];
-                Execute(instruction, operand);
-            }
-            // Console.WriteLine("A = " + a);
-            string outputString = String.Join(",", Output);
-            // Console.WriteLine(output);
-            string allInstructionsString = String.Join(",", AllInstructions.Select(i => (int)i));
-            if (a % 100_000 == 0)
-                Console.WriteLine(a);
-            if (outputString != allInstructionsString)
-                continue;
-            
-            Console.WriteLine("Answer = " + a);
-            break;
-        }
-    }
+            if (program.Count == 0)
+                return answer;
 
+            long a = 0;
+            long b = 0;
+            long c = 0;
+            for (long i = 0; i < 8; i++)
+            {
+                a = (answer << 3) | i;
+                b = a % 8;
+                b ^= 1;
+                c = a >> (int)b;
+                b ^= 5;
+                b ^= c;
+                long last = b % 8;
+                if (last != (long)program.Last())
+                    continue;
+
+                var subAnswer = findLowestInitialA(program.SkipLast(1).ToList(), a);
+                if (subAnswer == null)
+                    continue;
+
+                return subAnswer;
+            }
+
+            return null;
+        }
+
+        List<int> program = AllInstructions
+            .SelectMany(pair => new[] { (int)pair.Item1, pair.Item2 })
+            .ToList();
+        long? lowestA = findLowestInitialA(program, 0);
+        Console.WriteLine(
+            "The lowest initial value for register A that causes the program to output a copy of itself is "
+                + lowestA
+        );
+    }
 
     private static void Execute(Instruction instruction, int operand)
     {
         switch (instruction)
         {
-            case Instruction.adv:
+            case Instruction.ADV:
                 long numerator = Register.A;
-                int denominator = (int)Math.Pow(2, ComboOperandToValue(operand));
+                long denominator = (long)Math.Pow(2, ComboOperandToValue(operand));
                 Register.A = numerator / denominator;
                 break;
-            case Instruction.bxl:
+            case Instruction.BXL:
                 Register.B ^= operand;
                 break;
-            case Instruction.bst:
+            case Instruction.BST:
                 Register.B = ComboOperandToValue(operand) % 8;
                 break;
-            case Instruction.jnz:
+            case Instruction.JNZ:
                 if (Register.A == 0)
                     break;
                 InstructionPointer = operand;
                 break;
-            case Instruction.bxc:
+            case Instruction.BXC:
                 Register.B ^= Register.C;
                 break;
-            case Instruction.out_:
+            case Instruction.OUT:
                 long value = ComboOperandToValue(operand) % 8;
                 Output.Add(value);
                 break;
-            case Instruction.bdv:
+            case Instruction.BDV:
                 numerator = Register.A;
-                denominator = (int)Math.Pow(2, ComboOperandToValue(operand));
+                denominator = (long)Math.Pow(2, ComboOperandToValue(operand));
                 Register.B = numerator / denominator;
                 break;
-            case Instruction.cdv:
+            case Instruction.CDV:
                 numerator = Register.A;
                 denominator = (int)Math.Pow(2, ComboOperandToValue(operand));
                 Register.C = numerator / denominator;
                 break;
-            
+
             default:
                 throw new Exception("ERROR: BAD INSTRUCTION");
         }
-
     }
 
-
-    
     private static void Parse()
     {
-        Register.A = int.Parse(InputLines[0].Split(" ").Last());
-        Register.B = int.Parse(InputLines[1].Split(" ").Last());
-        Register.C = int.Parse(InputLines[2].Split(" ").Last());
-        AllInstructions = InputLines.Last()
-                                    .Split(" ")
-                                    .Last()
-                                    .Split(",")
-                                    .Select(c => (Instruction)int.Parse(c))
-                                    .ToList();
+        Register.A = long.Parse(InputLines[0].Split(" ").Last());
+        Register.B = long.Parse(InputLines[1].Split(" ").Last());
+        Register.C = long.Parse(InputLines[2].Split(" ").Last());
+        AllInstructions = InputLines
+            .Last()
+            .Split(" ")
+            .Last()
+            .Split(",")
+            .Chunk(2)
+            .Select(pair => ((Instruction)int.Parse(pair.First()), int.Parse(pair.Last())))
+            .ToList();
     }
 
-    
     private static string[] InputLines = [];
-    private static List<Instruction> AllInstructions = [];
+    private static List<(Instruction, int)> AllInstructions = [];
 
     private static int InstructionPointer;
-    
-
 
     private static long ComboOperandToValue(int comboOperand)
     {
@@ -164,10 +173,8 @@ class Program
         };
     }
 
-
     private static List<long> Output = [];
 
-    
     private static class Register
     {
         public static long A;
@@ -175,23 +182,15 @@ class Program
         public static long C;
     }
 
-
     private enum Instruction
     {
-        adv,
-        bxl,
-        bst,
-        jnz,
-        bxc,
-        out_,
-        bdv,
-        cdv
+        ADV,
+        BXL,
+        BST,
+        JNZ,
+        BXC,
+        OUT,
+        BDV,
+        CDV,
     }
-
-
-
-    
-    
-
 }
-
